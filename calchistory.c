@@ -6,7 +6,7 @@
 
 
 
-struct _info
+struct info
 {
 
 	
@@ -21,10 +21,10 @@ struct _info
 	GtkWidget *history_label;
 	GtkWidget *history_label2;
 	GtkWidget *history_label3;
-	char history_buffer[3][19];
-	int i;
 
-}info;
+
+
+};
 
 
 
@@ -34,135 +34,177 @@ gboolean zero_to_nine_keys_callback ( GtkWidget *widget, GdkEventKey *event );
 
 void plus_calculation (GtkButton *entry, gpointer data) {
 
-
-	char output_buffer[19] = {0};
-	//char history_buffer[20]= {0};
-	//char newline[]={"\n"};
-	const gchar* text = gtk_entry_get_text(GTK_ENTRY(info.textentry));
-	const gchar* text2 = gtk_entry_get_text(GTK_ENTRY(info.textentry2));
-
-	
-	//g_print("%s\n", text);
+	struct info *p = (struct info *) data;
+	char output_buffer[25] = {0};
+	static char history_buffer[3][25] = { 0 };
+	const gchar* text = gtk_entry_get_text(GTK_ENTRY(p->textentry));
+	const gchar* text2 = gtk_entry_get_text(GTK_ENTRY(p->textentry2));
 	
 	float x = atof(text);
 	float y = atof(text2);
-	
+	static int i=0;
 	
 	
 	
 	if (strlen(text) == 0 && strlen(text2) == 0){
 	
-	gtk_entry_set_text(GTK_ENTRY(info.textentry3), "Operand 1 and Operand 2 are empty");
+	gtk_entry_set_text(GTK_ENTRY(p->textentry3), "Operand 1 and Operand 2 are empty");
 	
 	}
 	else if (strlen(text) == 0 ){
 	
-	gtk_entry_set_text(GTK_ENTRY(info.textentry3), "Operand 1 is empty");
+	gtk_entry_set_text(GTK_ENTRY(p->textentry3), "Operand 1 is empty");
 	}
 	
 	else if (strlen(text2) == 0){
 	
-	gtk_entry_set_text(GTK_ENTRY(info.textentry3), "Operand 2 is empty");
+	gtk_entry_set_text(GTK_ENTRY(p->textentry3), "Operand 2 is empty");
 	}
 	
 	else {
 	g_print("%f\nplus\n%f\nresult\n%f\n", x,y,x+y);
 	
-	gtk_entry_set_text(GTK_ENTRY(info.textentry3), "");
+	gtk_entry_set_text(GTK_ENTRY(p->textentry3), "");
 	sprintf(output_buffer, "%f\n", x+y);
 	
-	gtk_entry_set_text(GTK_ENTRY(info.textentry3), output_buffer);
+	gtk_entry_set_text(GTK_ENTRY(p->textentry3), output_buffer);
 	}
-
-	strcpy(info.history_buffer[info.i], output_buffer);
-	info.i++;
-	if (info.i==3){
-	info.i=0;
+	strncpy (history_buffer[i], output_buffer, strlen(output_buffer));
+	
+	gtk_label_set_text (GTK_LABEL (p->history_label), history_buffer[0]);
+	gtk_label_set_text (GTK_LABEL (p->history_label2), history_buffer[1]);
+	gtk_label_set_text (GTK_LABEL (p->history_label3), history_buffer[2]);
+	
+	
+	i++;
+	if (i ==3){
+	i=0;
+	for (int j = 0; j< 25; j++){
+	for (int k = 0; k < 3 ; k++){
+		history_buffer[k][j] = 0;
+		}
+				     }
 	}
 	
-	gtk_label_set_text(GTK_LABEL(info.history_label), info.history_buffer[0]);
-	gtk_label_set_text(GTK_LABEL(info.history_label2), info.history_buffer[1]);
-	gtk_label_set_text(GTK_LABEL(info.history_label3), info.history_buffer[2]);
+	
+	
+	
 
 
 }
 
 void minus_calculation (GtkButton *entry, gpointer data) {
 
-
+	struct info *p = (struct info *) data;
 	char output_buffer[19] = {0};
-	const gchar* text = gtk_entry_get_text(GTK_ENTRY(info.textentry));
-	const gchar* text2 = gtk_entry_get_text(GTK_ENTRY(info.textentry2));
-	
-	//g_print("%s\n", text);
+	static char history_buffer2[3][25];
+	const gchar* text = gtk_entry_get_text(GTK_ENTRY(p->textentry));
+	const gchar* text2 = gtk_entry_get_text(GTK_ENTRY(p->textentry2));
 	
 	float x = atof(text);
 	float y = atof(text2);
-	
+	static int n=0;
 	
 	
 	if (strlen(text) == 0 && strlen(text2) == 0){
 	
-	gtk_entry_set_text(GTK_ENTRY(info.textentry3), "Operand 1 and Operand 2 are empty");
+	gtk_entry_set_text(GTK_ENTRY(p->textentry3), "Operand 1 and Operand 2 are empty");
 	
 	}
 	else if (strlen(text) == 0 ){
 	
-	gtk_entry_set_text(GTK_ENTRY(info.textentry3), "Operand 1 is empty");
+	gtk_entry_set_text(GTK_ENTRY(p->textentry3), "Operand 1 is empty");
 	}
 	
 	else if (strlen(text2) == 0){
 	
-	gtk_entry_set_text(GTK_ENTRY(info.textentry3), "Operand 2 is empty");
+	gtk_entry_set_text(GTK_ENTRY(p->textentry3), "Operand 2 is empty");
 	}
 	
 	else {
 	
 	g_print("%f\nminus\n%f\nresult\n%f\n", x,y,x-y);
 	
-	gtk_entry_set_text(GTK_ENTRY(info.textentry3), "");
+	gtk_entry_set_text(GTK_ENTRY(p->textentry3), "");
 	sprintf(output_buffer, "%f\n", x-y);
-	gtk_entry_set_text(GTK_ENTRY(info.textentry3), output_buffer);
+	gtk_entry_set_text(GTK_ENTRY(p->textentry3), output_buffer);
 	
 	}
-
+	strcpy (history_buffer2[n], output_buffer);
+	
+	gtk_label_set_text (GTK_LABEL (p->history_label), history_buffer2[0]);
+	gtk_label_set_text (GTK_LABEL (p->history_label2), history_buffer2[1]);
+	gtk_label_set_text (GTK_LABEL (p->history_label3), history_buffer2[2]);
+	
+	
+	n++;
+	if (n == 3){
+	n=0;
+	for (int j = 0; j< 25; j++){
+	for (int k = 0; k < 3 ; k++){
+		history_buffer2[k][j] = 0;
+		}
+				     }
+	}
+	
+	
 
 }
 
 void multiplied_calculation (GtkButton *entry, gpointer data) {
 
-
+	struct info *p = (struct info *) data;
 	char output_buffer[19] = {0};
-	const gchar* text = gtk_entry_get_text(GTK_ENTRY(info.textentry));
-	const gchar* text2 = gtk_entry_get_text(GTK_ENTRY(info.textentry2));
+	static char history_buffer3[3][25];
+	const gchar* text = gtk_entry_get_text(GTK_ENTRY(p->textentry));
+	const gchar* text2 = gtk_entry_get_text(GTK_ENTRY(p->textentry2));
 	
 	
 	long double x = atof(text);
 	long double y = atof(text2);
+	static int l=0; 
 	
 	
 	if (strlen(text) == 0 && strlen(text2) == 0){
 	
-	gtk_entry_set_text(GTK_ENTRY(info.textentry3), "Operand 1 and Operand 2 are empty");
+	gtk_entry_set_text(GTK_ENTRY(p->textentry3), "Operand 1 and Operand 2 are empty");
 	
 	}
 	else if (strlen(text) == 0 ){
 	
-	gtk_entry_set_text(GTK_ENTRY(info.textentry3), "Operand 1 is empty");
+	gtk_entry_set_text(GTK_ENTRY(p->textentry3), "Operand 1 is empty");
 	}
 	
 	else if (strlen(text2) == 0){
 	
-	gtk_entry_set_text(GTK_ENTRY(info.textentry3), "Operand 2 is empty");
+	gtk_entry_set_text(GTK_ENTRY(p->textentry3), "Operand 2 is empty");
 	}
 	
 	else {
 	
 	g_print("%Lf\nmultiplied\n%Lf\nresult\n%Lf\n", x,y,x*y);
 	
-	gtk_entry_set_text(GTK_ENTRY(info.textentry3), "");
+	gtk_entry_set_text(GTK_ENTRY(p->textentry3), "");
 	sprintf(output_buffer, "%Lf", x*y);
-	gtk_entry_set_text(GTK_ENTRY(info.textentry3), output_buffer);
+	gtk_entry_set_text(GTK_ENTRY(p->textentry3), output_buffer);
+	}
+	
+	strcpy (history_buffer3[l], output_buffer);
+	
+	gtk_label_set_text (GTK_LABEL (p->history_label), history_buffer3[0]);
+	gtk_label_set_text (GTK_LABEL (p->history_label2), history_buffer3[1]);
+	gtk_label_set_text (GTK_LABEL (p->history_label3), history_buffer3[2]);
+	
+	
+	l++;
+
+	if (l == 3){
+	l=0;
+	for (int j = 0; j< 25; j++){
+	for (int k = 0; k < 3 ; k++){
+		history_buffer3[k][j] = 0;
+		}
+				     }
 	}
 	
 
@@ -171,36 +213,38 @@ void multiplied_calculation (GtkButton *entry, gpointer data) {
 
 void division_calculation (GtkButton *entry, gpointer data) {
 
-
+	struct info *p = (struct info *) data;
 	char output_buffer[19] = {0};
-	const gchar* text = gtk_entry_get_text(GTK_ENTRY(info.textentry));
-	const gchar* text2 = gtk_entry_get_text(GTK_ENTRY(info.textentry2));
+	static char history_buffer4[3][25];
+	const gchar* text = gtk_entry_get_text(GTK_ENTRY(p->textentry));
+	const gchar* text2 = gtk_entry_get_text(GTK_ENTRY(p->textentry2));
 	
 	
 	float x = atof(text);
 	float y = atof(text2);
+	static int s= 0;
 	
 	
 	
 	if (strlen(text) == 0 && strlen(text2) == 0){
 	
-	gtk_entry_set_text(GTK_ENTRY(info.textentry3), "Operand 1 and Operand 2 are empty");
+	gtk_entry_set_text(GTK_ENTRY(p->textentry3), "Operand 1 and Operand 2 are empty");
 	
 	}
 	else if (strlen(text) == 0 ){
 	
-	gtk_entry_set_text(GTK_ENTRY(info.textentry3), "Operand 1 is empty");
+	gtk_entry_set_text(GTK_ENTRY(p->textentry3), "Operand 1 is empty");
 	}
 	
 	else if (strlen(text2) == 0){
 	
-	gtk_entry_set_text(GTK_ENTRY(info.textentry3), "Operand 2 is empty");
+	gtk_entry_set_text(GTK_ENTRY(p->textentry3), "Operand 2 is empty");
 	}
 	
 	
 	else if (y==0.000000){
 	
-	gtk_entry_set_text(GTK_ENTRY(info.textentry3), "Division by zero is undefined");
+	gtk_entry_set_text(GTK_ENTRY(p->textentry3), "Division by zero is undefined");
 	
 	}
 	
@@ -209,10 +253,27 @@ void division_calculation (GtkButton *entry, gpointer data) {
 	
 	g_print("%.5f\ndivided\n%f\nresult\n%f\n", x,y,x/y);
 	
-	gtk_entry_set_text(GTK_ENTRY(info.textentry3), "");
+	gtk_entry_set_text(GTK_ENTRY(p->textentry3), "");
 	sprintf(output_buffer, "%0.5f", x/y);
-	gtk_entry_set_text(GTK_ENTRY(info.textentry3), output_buffer);
+	gtk_entry_set_text(GTK_ENTRY(p->textentry3), output_buffer);
 	
+	}
+	
+	strcpy (history_buffer4[s], output_buffer);
+	
+	gtk_label_set_text (GTK_LABEL (p->history_label), history_buffer4[0]);
+	gtk_label_set_text (GTK_LABEL (p->history_label2), history_buffer4[1]);
+	gtk_label_set_text (GTK_LABEL (p->history_label3), history_buffer4[2]);
+	
+	
+	s++;
+	if (s == 3){
+	s=0;
+	for (int j = 0; j< 25; j++){
+	for (int k = 0; k < 3 ; k++){
+		history_buffer4[k][j] = 0;
+		}
+				     }
 	}
 
 
@@ -220,60 +281,81 @@ void division_calculation (GtkButton *entry, gpointer data) {
 
 void squared_calculation (GtkButton *entry, gpointer data) {
 
+	struct info *p = (struct info *) data;
 	char output_buffer[19] = {0};
-	const gchar* text = gtk_entry_get_text(GTK_ENTRY(info.textentry));
-	const gchar* text2 = gtk_entry_get_text(GTK_ENTRY(info.textentry2));
+	static char history_buffer5[3][25];
+	const gchar* text = gtk_entry_get_text(GTK_ENTRY(p->textentry));
+	const gchar* text2 = gtk_entry_get_text(GTK_ENTRY(p->textentry2));
 	float x = atof(text);
 	float y=atof(text2);
+	static int s=0;
 	
 	
 	
 	if (strlen(text) == 0 && strlen(text2) == 0){
 	
-	gtk_entry_set_text(GTK_ENTRY(info.textentry3), "You should write in operand one or in operand 2");
+	gtk_entry_set_text(GTK_ENTRY(p->textentry3), "You should write in operand one or in operand 2");
 	
 	}
 	
 	else if (strlen(text) == 0){
 	
 	g_print("%.0f\nsquared is \n%.0f\n", y,y*y);
-	gtk_entry_set_text(GTK_ENTRY(info.textentry3), "");
+	gtk_entry_set_text(GTK_ENTRY(p->textentry3), "");
 	sprintf(output_buffer, "%.0f\n", y*y);
-	gtk_entry_set_text(GTK_ENTRY(info.textentry3), output_buffer);
+	gtk_entry_set_text(GTK_ENTRY(p->textentry3), output_buffer);
 	
 	}
 	
 	else if (strlen(text2) == 0){
 	
 	g_print("%.0f\nsquared is \n%.0f\n", x,x*x);
-	gtk_entry_set_text(GTK_ENTRY(info.textentry3), "");
+	gtk_entry_set_text(GTK_ENTRY(p->textentry3), "");
 	sprintf(output_buffer, "%.0f\n", x*x);
-	gtk_entry_set_text(GTK_ENTRY(info.textentry3), output_buffer);
+	gtk_entry_set_text(GTK_ENTRY(p->textentry3), output_buffer);
 	
 	}
 	
 	else {
-	gtk_entry_set_text(GTK_ENTRY(info.textentry3), "you should write only in one operand!");
+	gtk_entry_set_text(GTK_ENTRY(p->textentry3), "you should write only in one operand!");
 	
 	}
+	strcpy (history_buffer5[s], output_buffer);
 	
+	gtk_label_set_text (GTK_LABEL (p->history_label), history_buffer5[0]);
+	gtk_label_set_text (GTK_LABEL (p->history_label2), history_buffer5[1]);
+	gtk_label_set_text (GTK_LABEL (p->history_label3), history_buffer5[2]);
+	
+	
+	s++;
+	if (s == 3){
+	s=0;
+	for (int j = 0; j< 25; j++){
+	for (int k = 0; k < 3 ; k++){
+		history_buffer5[k][j] = 0;
+		}
+				     }
+	}
+
 
 }
 
 void square_root_calculation (GtkButton *entry, gpointer data){
 
 
+	struct info *p = (struct info *) data;
 	char output_buffer[19] = {0};
-	const gchar* text = gtk_entry_get_text(GTK_ENTRY(info.textentry));
-	const gchar* text2 = gtk_entry_get_text(GTK_ENTRY(info.textentry2));
+	static char history_buffer6[3][25];
+	const gchar* text = gtk_entry_get_text(GTK_ENTRY(p->textentry));
+	const gchar* text2 = gtk_entry_get_text(GTK_ENTRY(p->textentry2));
 	long double x = atof(text);
 	long double y=atof(text2);
-	
+	static int s=0;
 	
 	
 	if (strlen(text) == 0 && strlen(text2) == 0){
 	
-	gtk_entry_set_text(GTK_ENTRY(info.textentry3), "You should write in operand one or in operand 2");
+	gtk_entry_set_text(GTK_ENTRY(p->textentry3), "You should write in operand one or in operand 2");
 	
 	}
 	
@@ -293,9 +375,9 @@ void square_root_calculation (GtkButton *entry, gpointer data){
 	}
 	
 	g_print("the sequare root of %.0Lf\n is \n%.0Lf\n", y,result);
-	gtk_entry_set_text(GTK_ENTRY(info.textentry3), "");
+	gtk_entry_set_text(GTK_ENTRY(p->textentry3), "");
 	sprintf(output_buffer, "%.5Lf\n",result);
-	gtk_entry_set_text(GTK_ENTRY(info.textentry3), output_buffer);
+	gtk_entry_set_text(GTK_ENTRY(p->textentry3), output_buffer);
 	
 	}
 	
@@ -314,31 +396,49 @@ void square_root_calculation (GtkButton *entry, gpointer data){
 	}
 	
 	g_print("the sequare root of %.0Lf\n is \n%.5Lf\n", x,result2);
-	gtk_entry_set_text(GTK_ENTRY(info.textentry3), "");
+	gtk_entry_set_text(GTK_ENTRY(p->textentry3), "");
 	sprintf(output_buffer, "%0.5Lf\n",result2);
-	gtk_entry_set_text(GTK_ENTRY(info.textentry3), output_buffer);
+	gtk_entry_set_text(GTK_ENTRY(p->textentry3), output_buffer);
 	
 	}
 	
 	else {
-	gtk_entry_set_text(GTK_ENTRY(info.textentry3), "you should write only in one operand!");
+	gtk_entry_set_text(GTK_ENTRY(p->textentry3), "you should write only in one operand!");
 	
+	}
+	
+	strcpy (history_buffer6[s], output_buffer);
+	
+	gtk_label_set_text (GTK_LABEL (p->history_label), history_buffer6[0]);
+	gtk_label_set_text (GTK_LABEL (p->history_label2), history_buffer6[1]);
+	gtk_label_set_text (GTK_LABEL (p->history_label3), history_buffer6[2]);
+	
+	
+	s++;
+	if (s == 3){
+	s=0;
+	for (int j = 0; j< 25; j++){
+	for (int k = 0; k < 3 ; k++){
+		history_buffer6[k][j] = 0;
+		}
+				     }
 	}
 
 }
 void comma_button (GtkButton *button, gpointer data){
 
+	struct info *p = (struct info *) data;
 	char output_buffer[19] = {0};
 	char comma_buffer[]={","};
-	const gchar* text = gtk_entry_get_text(GTK_ENTRY(info.textentry));
-	const gchar* text2 = gtk_entry_get_text(GTK_ENTRY(info.textentry2));
+	const gchar* text = gtk_entry_get_text(GTK_ENTRY(p->textentry));
+	const gchar* text2 = gtk_entry_get_text(GTK_ENTRY(p->textentry2));
 	
 	
 	
 	
 	 if (strlen(text) == 0 && strlen(text2) == 0){
 	
-	gtk_entry_set_text(GTK_ENTRY(info.textentry3), "You should write in operand one ");
+	gtk_entry_set_text(GTK_ENTRY(p->textentry3), "You should write in operand one ");
 	
 	}
 	
@@ -348,19 +448,19 @@ void comma_button (GtkButton *button, gpointer data){
 	
 	sprintf(output_buffer, "%s", text);
 	strcat(output_buffer,comma_buffer);
-	gtk_entry_set_text(GTK_ENTRY(info.textentry), output_buffer);
+	gtk_entry_set_text(GTK_ENTRY(p->textentry), output_buffer);
 	}
 	
 	else if (strlen(text) !=0) {
 	
 	sprintf(output_buffer, "%s", text2);
 	strcat(output_buffer,comma_buffer);
-	gtk_entry_set_text(GTK_ENTRY(info.textentry2), output_buffer);
+	gtk_entry_set_text(GTK_ENTRY(p->textentry2), output_buffer);
 	}
 	
 	else {
 	
-	gtk_entry_set_text(GTK_ENTRY(info.textentry3), "Please clear the secound operand and beginn with the first operand");
+	gtk_entry_set_text(GTK_ENTRY(p->textentry3), "Please clear the secound operand and beginn with the first operand");
 	}
 	
 	
@@ -370,14 +470,15 @@ void comma_button (GtkButton *button, gpointer data){
 
 void backspace_operation (GtkButton *entry, gpointer data){
 
+	struct info *p = (struct info *) data;
 	char output_buffer[19] = {0};
-	const gchar* text = gtk_entry_get_text(GTK_ENTRY(info.textentry));
-	const gchar* text2 = gtk_entry_get_text(GTK_ENTRY(info.textentry2));
+	const gchar* text = gtk_entry_get_text(GTK_ENTRY(p->textentry));
+	const gchar* text2 = gtk_entry_get_text(GTK_ENTRY(p->textentry2));
 
 
 	if (strlen(text) == 0 && strlen(text2) == 0){
 	
-	gtk_entry_set_text(GTK_ENTRY(info.textentry3), "You should write in operand one or in operand 2");
+	gtk_entry_set_text(GTK_ENTRY(p->textentry3), "You should write in operand one or in operand 2");
 	
 	}
 
@@ -385,35 +486,37 @@ void backspace_operation (GtkButton *entry, gpointer data){
 	
 	sprintf(output_buffer, "%s", text);
 	output_buffer[strlen(output_buffer)-1] = '\0';
-	gtk_entry_set_text(GTK_ENTRY(info.textentry), output_buffer);
+	gtk_entry_set_text(GTK_ENTRY(p->textentry), output_buffer);
 	}
 	
 	else if ((strlen(text2)!=0 && strlen(text) == 0) || strlen(text2)!=0 ){
 	
 	sprintf(output_buffer, "%s", text2);
 	output_buffer[strlen(output_buffer)-1] = '\0';
-	gtk_entry_set_text(GTK_ENTRY(info.textentry2), output_buffer);
+	gtk_entry_set_text(GTK_ENTRY(p->textentry2), output_buffer);
 	}
 	
 	else {
-	gtk_entry_set_text(GTK_ENTRY(info.textentry3), "You should write in operand one or in operand 2");
+	gtk_entry_set_text(GTK_ENTRY(p->textentry3), "You should write in operand one or in operand 2");
 	}
 
 }
 
 void percent_operation (GtkButton *entry, gpointer data){
-	
+	struct info *p = (struct info *) data;
 	char output_buffer[19] = {0};
-	const gchar* text = gtk_entry_get_text(GTK_ENTRY(info.textentry));
-	const gchar* text2 = gtk_entry_get_text(GTK_ENTRY(info.textentry2));
+	static char history_buffer7[3][25];
+	const gchar* text = gtk_entry_get_text(GTK_ENTRY(p->textentry));
+	const gchar* text2 = gtk_entry_get_text(GTK_ENTRY(p->textentry2));
 	long double x = atof(text);
 	long double y=atof(text2);
+	static int s=0;
 	
 	
 	
 	if (strlen(text) == 0 && strlen(text2) == 0){
 	
-	gtk_entry_set_text(GTK_ENTRY(info.textentry3), "You should write in operand one or in operand 2");
+	gtk_entry_set_text(GTK_ENTRY(p->textentry3), "You should write in operand one or in operand 2");
 	
 	}
 	
@@ -425,9 +528,9 @@ void percent_operation (GtkButton *entry, gpointer data){
 	
 	
 	g_print("the precent of %.0Lf\n is \n%.5Lf\n", y,y/100);
-	gtk_entry_set_text(GTK_ENTRY(info.textentry3), "");
+	gtk_entry_set_text(GTK_ENTRY(p->textentry3), "");
 	sprintf(output_buffer, "%.5Lf\n",y/100);
-	gtk_entry_set_text(GTK_ENTRY(info.textentry3), output_buffer);
+	gtk_entry_set_text(GTK_ENTRY(p->textentry3), output_buffer);
 	
 	}
 	
@@ -437,15 +540,31 @@ void percent_operation (GtkButton *entry, gpointer data){
 	
 	
 	g_print("the precent of %.0Lf\n is \n%.5Lf\n", x,x/100);
-	gtk_entry_set_text(GTK_ENTRY(info.textentry3), "");
+	gtk_entry_set_text(GTK_ENTRY(p->textentry3), "");
 	sprintf(output_buffer, "%.5Lf\n",x/100);
-	gtk_entry_set_text(GTK_ENTRY(info.textentry3), output_buffer);
+	gtk_entry_set_text(GTK_ENTRY(p->textentry3), output_buffer);
 	
 	}
 	
 	else {
-	gtk_entry_set_text(GTK_ENTRY(info.textentry3), "you should write only in one operand!");
+	gtk_entry_set_text(GTK_ENTRY(p->textentry3), "you should write only in one operand!");
 	
+	}
+	strcpy (history_buffer7[s], output_buffer);
+	
+	gtk_label_set_text (GTK_LABEL (p->history_label), history_buffer7[0]);
+	gtk_label_set_text (GTK_LABEL (p->history_label2), history_buffer7[1]);
+	gtk_label_set_text (GTK_LABEL (p->history_label3), history_buffer7[2]);
+	
+	
+	s++;
+	if (s == 3){
+	s=0;
+	for (int j = 0; j< 25; j++){
+	for (int k = 0; k < 3 ; k++){
+		history_buffer7[k][j] = 0;
+		}
+				     }
 	}
 	
 
@@ -456,25 +575,27 @@ void percent_operation (GtkButton *entry, gpointer data){
 void clear_operation (GtkButton *entry, gpointer data){
 
 	
-	
-	gtk_entry_set_text(GTK_ENTRY(info.textentry), "");
-	gtk_entry_set_text(GTK_ENTRY(info.textentry2), "");
-	gtk_entry_set_text(GTK_ENTRY(info.textentry3), "");
+	struct info *p = (struct info *) data;
+	gtk_entry_set_text(GTK_ENTRY(p->textentry), "");
+	gtk_entry_set_text(GTK_ENTRY(p->textentry2), "");
+	gtk_entry_set_text(GTK_ENTRY(p->textentry3), "");
 	
 	
 }
 
 
-void close_window(){
 
-	gtk_main_quit();
 
-}
+void make_window(GtkApplication *app, gpointer data){
 
-void make_window(){
-
+	struct info *p = (struct info *) data;
+	GtkWidget *window;
 	
-	GtkWidget *window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
+	//window = gtk_application_window_new(app);
+	
+	window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
+	
+	gtk_window_set_application (GTK_WINDOW (window), GTK_APPLICATION (app));
 	
 	gtk_window_set_position(GTK_WINDOW(window), GTK_WIN_POS_CENTER);
 	
@@ -486,198 +607,148 @@ void make_window(){
 	 
 	gtk_container_add(GTK_CONTAINER(window), vbox);
 	
-	info.op1_label= gtk_label_new("\nOperand 1: ");
+	p->op1_label= gtk_label_new("\nOperand 1: ");
 	
-	gtk_box_pack_start(GTK_BOX(vbox), info.op1_label, FALSE, TRUE, 4);
+	gtk_box_pack_start(GTK_BOX(vbox), p->op1_label, TRUE, TRUE, 4);
 	
-	info.textentry= gtk_entry_new();
+	p->textentry= gtk_entry_new();
 	
-	gtk_box_pack_start(GTK_BOX(vbox), info.textentry, FALSE, FALSE, 4);
+	gtk_box_pack_start(GTK_BOX(vbox), p->textentry, TRUE, TRUE, 4);
 	
-	gtk_entry_set_max_length( GTK_ENTRY(info.textentry), 8);
+	gtk_entry_set_max_length( GTK_ENTRY(p->textentry), 8);
 	
-	gtk_entry_set_alignment (GTK_ENTRY(info.textentry), 0.05f);
+	gtk_entry_set_alignment (GTK_ENTRY(p->textentry), 0.05f);
 	
-	info.op2_label = gtk_label_new("\nOperand 2: ");
+	p->op2_label = gtk_label_new("\nOperand 2: ");
 	
-	gtk_box_pack_start(GTK_BOX(vbox), info.op2_label, FALSE, TRUE, 4);
+	gtk_box_pack_start(GTK_BOX(vbox), p->op2_label, TRUE, TRUE, 4);
 	
-	info.textentry2 = gtk_entry_new();
-	
-	
-	gtk_box_pack_start(GTK_BOX(vbox), info.textentry2, FALSE, FALSE, 4);
-	
-	gtk_entry_set_max_length( GTK_ENTRY(info.textentry2), 8);
-	
-	gtk_entry_set_alignment (GTK_ENTRY(info.textentry2), 0.05f);
-	
-	info.res_label= gtk_label_new("\nresult: ");
+	p->textentry2 = gtk_entry_new();
 	
 	
+	gtk_box_pack_start(GTK_BOX(vbox), p->textentry2, FALSE, FALSE, 4);
 	
+	gtk_entry_set_max_length( GTK_ENTRY(p->textentry2), 8);
 	
-	gtk_box_pack_start(GTK_BOX(vbox), info.res_label, FALSE, TRUE, 4);
+	gtk_entry_set_alignment (GTK_ENTRY(p->textentry2), 0.05f);
 	
-	info.textentry3= gtk_entry_new();
-	
-	gtk_box_pack_start(GTK_BOX(vbox), info.textentry3, FALSE, FALSE, 4);
-	
-	gtk_entry_set_max_length( GTK_ENTRY(info.textentry3), 100);
-	
-	gtk_entry_set_alignment (GTK_ENTRY(info.textentry3), 0.05f);
-	
-	
-	info.history_label= gtk_label_new("");
-	
-	gtk_box_pack_start(GTK_BOX(vbox), info.history_label, FALSE, TRUE, 4);
+	p->res_label= gtk_label_new("\nresult: ");
 	
 	
 	
-	info.history_label2= gtk_label_new("");
 	
-	gtk_box_pack_start(GTK_BOX(vbox), info.history_label2, FALSE, TRUE, 4);
+	gtk_box_pack_start(GTK_BOX(vbox), p->res_label, FALSE, TRUE, 4);
+	
+	p->textentry3= gtk_entry_new();
+	
+	gtk_box_pack_start(GTK_BOX(vbox), p->textentry3, FALSE, FALSE, 4);
+	
+	gtk_entry_set_max_length( GTK_ENTRY(p->textentry3), 100);
+	
+	gtk_entry_set_alignment (GTK_ENTRY(p->textentry3), 0.05f);
 	
 	
-	info.history_label3= gtk_label_new("");
+	p->history_label= gtk_label_new("");
 	
-	gtk_box_pack_start(GTK_BOX(vbox), info.history_label3, FALSE, TRUE, 4);
+	gtk_box_pack_start(GTK_BOX(vbox), p->history_label, FALSE, TRUE, 4);
+	
+	p->history_label2= gtk_label_new("");
+	
+	gtk_box_pack_start(GTK_BOX(vbox), p->history_label2, FALSE, TRUE, 4);
+	
+	p->history_label3= gtk_label_new("");
+	
+	gtk_box_pack_start(GTK_BOX(vbox), p->history_label3, FALSE, TRUE, 4);
 	
 	
 
 	
-	info.grid= gtk_grid_new();
-	gtk_grid_set_column_homogeneous (GTK_GRID(info.grid), TRUE);
-	gtk_grid_set_column_spacing (GTK_GRID(info.grid), 5);
-	gtk_grid_set_row_spacing (GTK_GRID(info.grid), 3);
+	p->grid= gtk_grid_new();
+	gtk_grid_set_column_homogeneous (GTK_GRID(p->grid), TRUE);
+	gtk_grid_set_column_spacing (GTK_GRID(p->grid), 5);
+	gtk_grid_set_row_spacing (GTK_GRID(p->grid), 3);
 	
-	gtk_box_pack_start(GTK_BOX(vbox), info.grid, FALSE, TRUE, 100);
-	
-	
-	info.button[0] = gtk_button_new_with_label ("C");
-	gtk_container_set_border_width( GTK_CONTAINER(info.button[0]), 0);
-	gtk_widget_set_size_request(info.button[0], 50,50);
-	gtk_grid_attach(GTK_GRID(info.grid), info.button[0], 0,0,3,1);
-	
-	info.button[1] = gtk_button_new_with_label ("√");
-	gtk_container_set_border_width( GTK_CONTAINER(info.button[1]), 0);
-	gtk_widget_set_size_request(info.button[1], 100,100);
-	gtk_grid_attach(GTK_GRID(info.grid), info.button[1], 0,4,1,1);
-	
-	info.button[2] = gtk_button_new_with_label ("÷");
-	gtk_container_set_border_width( GTK_CONTAINER(info.button[2]), 0);
-	gtk_widget_set_size_request(info.button[2], 100,100);
-	gtk_grid_attach(GTK_GRID(info.grid), info.button[2], 0,1,1,2);
-	
-	info.button[3] = gtk_button_new_with_label ("*");
-	gtk_container_set_border_width( GTK_CONTAINER(info.button[3]), 0);
-	gtk_widget_set_size_request(info.button[3], 100,100);
-	gtk_grid_attach(GTK_GRID(info.grid), info.button[3], 1,1,1,2);
-	
-	info.button[4] = gtk_button_new_with_label (",");
-	gtk_container_set_border_width( GTK_CONTAINER(info.button[4]), 0);
-	gtk_widget_set_size_request(info.button[4], 100,100);
-	gtk_grid_attach(GTK_GRID(info.grid), info.button[4], 1,4,1,1);
-	
-	info.button[5] = gtk_button_new_with_label ("-");
-	gtk_container_set_border_width( GTK_CONTAINER(info.button[5]), 0);
-	gtk_widget_set_size_request(info.button[5], 100,100);
-	gtk_grid_attach(GTK_GRID(info.grid), info.button[5], 2,1,1,2);
+	gtk_box_pack_start(GTK_BOX(vbox), p->grid, FALSE, TRUE, 100);
 	
 	
-	info.button[6] = gtk_button_new_with_label ("x²");
-	gtk_container_set_border_width( GTK_CONTAINER(info.button[6]), 0);
-	gtk_widget_set_size_request(info.button[6], 100,100);
-	gtk_grid_attach(GTK_GRID(info.grid), info.button[6], 3,0,1,1);
+	p->button[0] = gtk_button_new_with_label ("C");
+	gtk_container_set_border_width( GTK_CONTAINER(p->button[0]), 0);
+	gtk_widget_set_size_request(p->button[0], 50,50);
+	gtk_grid_attach(GTK_GRID(p->grid), p->button[0], 0,0,3,1);
 	
-	info.button[7] = gtk_button_new_with_label ("+");
-	gtk_container_set_border_width( GTK_CONTAINER(info.button[7]), 0);
-	gtk_widget_set_size_request(info.button[7], 100,100);
-	gtk_grid_attach(GTK_GRID(info.grid), info.button[7], 3,1,1,2);
+	p->button[1] = gtk_button_new_with_label ("√");
+	gtk_container_set_border_width( GTK_CONTAINER(p->button[1]), 0);
+	gtk_widget_set_size_request(p->button[1], 100,100);
+	gtk_grid_attach(GTK_GRID(p->grid), p->button[1], 0,4,1,1);
+	
+	p->button[2] = gtk_button_new_with_label ("÷");
+	gtk_container_set_border_width( GTK_CONTAINER(p->button[2]), 0);
+	gtk_widget_set_size_request(p->button[2], 100,100);
+	gtk_grid_attach(GTK_GRID(p->grid), p->button[2], 0,1,1,2);
+	
+	p->button[3] = gtk_button_new_with_label ("*");
+	gtk_container_set_border_width( GTK_CONTAINER(p->button[3]), 0);
+	gtk_widget_set_size_request(p->button[3], 100,100);
+	gtk_grid_attach(GTK_GRID(p->grid), p->button[3], 1,1,1,2);
+	
+	p->button[4] = gtk_button_new_with_label (",");
+	gtk_container_set_border_width( GTK_CONTAINER(p->button[4]), 0);
+	gtk_widget_set_size_request(p->button[4], 100,100);
+	gtk_grid_attach(GTK_GRID(p->grid), p->button[4], 1,4,1,1);
+	
+	p->button[5] = gtk_button_new_with_label ("-");
+	gtk_container_set_border_width( GTK_CONTAINER(p->button[5]), 0);
+	gtk_widget_set_size_request(p->button[5], 100,100);
+	gtk_grid_attach(GTK_GRID(p->grid), p->button[5], 2,1,1,2);
 	
 	
-	info.button[8] = gtk_button_new_with_label ("⌫");
-	gtk_container_set_border_width( GTK_CONTAINER(info.button[8]), 0);
-	gtk_widget_set_size_request(info.button[8], 100,100);
-	gtk_grid_attach(GTK_GRID(info.grid), info.button[8], 2,4,1,1);
+	p->button[6] = gtk_button_new_with_label ("x²");
+	gtk_container_set_border_width( GTK_CONTAINER(p->button[6]), 0);
+	gtk_widget_set_size_request(p->button[6], 100,100);
+	gtk_grid_attach(GTK_GRID(p->grid), p->button[6], 3,0,1,1);
 	
-	info.button[9] = gtk_button_new_with_label ("%");
-	gtk_container_set_border_width( GTK_CONTAINER(info.button[9]), 0);
-	gtk_widget_set_size_request(info.button[9], 100,100);
-	gtk_grid_attach(GTK_GRID(info.grid), info.button[9], 3,4,1,1);
+	p->button[7] = gtk_button_new_with_label ("+");
+	gtk_container_set_border_width( GTK_CONTAINER(p->button[7]), 0);
+	gtk_widget_set_size_request(p->button[7], 100,100);
+	gtk_grid_attach(GTK_GRID(p->grid), p->button[7], 3,1,1,2);
 	
 	
+	p->button[8] = gtk_button_new_with_label ("⌫");
+	gtk_container_set_border_width( GTK_CONTAINER(p->button[8]), 0);
+	gtk_widget_set_size_request(p->button[8], 100,100);
+	gtk_grid_attach(GTK_GRID(p->grid), p->button[8], 2,4,1,1);
 	
+	p->button[9] = gtk_button_new_with_label ("%");
+	gtk_container_set_border_width( GTK_CONTAINER(p->button[9]), 0);
+	gtk_widget_set_size_request(p->button[9], 100,100);
+	gtk_grid_attach(GTK_GRID(p->grid), p->button[9], 3,4,1,1);
+
+g_signal_connect_swapped ( p->textentry, "activate", G_CALLBACK ( zero_to_nine_keys_callback ), p->textentry );
+g_signal_connect_swapped ( p->textentry, "key_press_event", G_CALLBACK ( zero_to_nine_keys_callback ), p->textentry);
 
 	
-g_signal_connect_swapped ( info.textentry, "activate", G_CALLBACK ( zero_to_nine_keys_callback ), info.textentry );
-g_signal_connect_swapped ( info.textentry, "key_press_event", G_CALLBACK ( zero_to_nine_keys_callback ), info.textentry);
 	
-g_signal_connect (G_OBJECT(window),"destroy", G_CALLBACK(close_window), NULL);
 	
-g_signal_connect_swapped ( info.textentry2, "activate", G_CALLBACK ( zero_to_nine_keys_callback ), info.textentry2 );
+g_signal_connect_swapped ( p->textentry2, "activate", G_CALLBACK ( zero_to_nine_keys_callback ), p->textentry2 );
 	
-g_signal_connect_swapped ( info.textentry2, "key_press_event", G_CALLBACK ( zero_to_nine_keys_callback ), info.textentry2);
+g_signal_connect_swapped ( p->textentry2, "key_press_event", G_CALLBACK ( zero_to_nine_keys_callback ), p->textentry2);
 
-g_signal_connect_swapped ( info.textentry3, "activate", G_CALLBACK ( zero_to_nine_keys_callback ), info.textentry3 );
+g_signal_connect_swapped ( p->textentry3, "activate", G_CALLBACK ( zero_to_nine_keys_callback ), p->textentry3 );
 	
-g_signal_connect_swapped ( info.textentry3, "key_press_event", G_CALLBACK ( zero_to_nine_keys_callback ), info.textentry3);
+g_signal_connect_swapped ( p->textentry3, "key_press_event", G_CALLBACK ( zero_to_nine_keys_callback ), p->textentry3);
 
-
-g_signal_connect_swapped ( info.button[7], "clicked", G_CALLBACK ( plus_calculation), info.button[7] );
+g_signal_connect (p->button[7], "clicked", G_CALLBACK (plus_calculation), (gpointer) p);
+g_signal_connect (p->button[5], "clicked", G_CALLBACK(minus_calculation), (gpointer) p);
+g_signal_connect ( p->button[3], "clicked", G_CALLBACK ( multiplied_calculation),(gpointer) p );
+g_signal_connect ( p->button[2], "clicked", G_CALLBACK ( division_calculation), (gpointer) p );
+g_signal_connect ( p->button[0], "clicked", G_CALLBACK ( clear_operation), (gpointer) p );
+g_signal_connect ( p->button[6], "clicked", G_CALLBACK ( squared_calculation),(gpointer) p );
+g_signal_connect ( p->button[1], "clicked", G_CALLBACK (square_root_calculation), (gpointer) p);
+g_signal_connect( p->button[4], "clicked", G_CALLBACK (comma_button), (gpointer) p);
+g_signal_connect ( p->button[8], "clicked", G_CALLBACK (backspace_operation), (gpointer) p );
+g_signal_connect( p->button[9], "clicked", G_CALLBACK (percent_operation),(gpointer) p );
 	
-g_signal_connect_swapped ( info.textentry3, "key_press_event", G_CALLBACK ( plus_calculation ), info.button[7]);
-
-
-g_signal_connect_swapped ( info.button[5], "clicked", G_CALLBACK ( minus_calculation), info.button[5] );
 	
-g_signal_connect_swapped ( info.textentry3, "key_press_event", G_CALLBACK ( minus_calculation), info.button[5]);
-
-
-
-g_signal_connect_swapped ( info.button[3], "clicked", G_CALLBACK ( multiplied_calculation), info.button[3] );
-	
-g_signal_connect_swapped ( info.textentry3, "key_press_event", G_CALLBACK ( multiplied_calculation), info.button[3]);
-
-
-g_signal_connect_swapped ( info.button[2], "clicked", G_CALLBACK ( division_calculation), info.button[2] );
-	
-g_signal_connect_swapped ( info.textentry3, "key_press_event", G_CALLBACK ( division_calculation), info.button[2]);
-
-
-g_signal_connect_swapped ( info.button[0], "clicked", G_CALLBACK ( clear_operation), info.button[0] );
-	
-g_signal_connect_swapped ( info.textentry, "activate", G_CALLBACK ( clear_operation), info.button[0]);
-
-
-g_signal_connect_swapped ( info.button[6], "clicked", G_CALLBACK ( squared_calculation), info.button[6] );
-	
-g_signal_connect_swapped ( info.textentry, "activate", G_CALLBACK ( squared_calculation), info.button[6]);
-
-g_signal_connect_swapped ( info.button[1], "clicked", G_CALLBACK (square_root_calculation), info.button[1] );
-	
-g_signal_connect_swapped ( info.textentry, "activate", G_CALLBACK ( square_root_calculation), info.button[1]);
-
-
-g_signal_connect_swapped ( info.button[4], "clicked", G_CALLBACK (comma_button), info.button[4] );
-	
-g_signal_connect_swapped ( info.textentry, "activate", G_CALLBACK ( comma_button), info.button[4]);
-
-
-
-g_signal_connect_swapped ( info.button[8], "clicked", G_CALLBACK (backspace_operation), info.button[8] );
-	
-g_signal_connect_swapped ( info.textentry, "activate", G_CALLBACK ( backspace_operation), info.button[8]);
-
-
-g_signal_connect_swapped ( info.button[9], "clicked", G_CALLBACK (percent_operation), info.button[9] );
-	
-g_signal_connect_swapped ( info.textentry, "activate", G_CALLBACK ( percent_operation), info.button[9]);
-
-
-
-	//g_signal_connect (info.button[7],"clicked", G_CALLBACK(calculate), NULL);
-	//g_signal_connect_swapped (info.textentry,"activate", G_CALLBACK(calculate), NULL);
-	g_signal_connect (G_OBJECT(window),"destroy", G_CALLBACK(close_window), NULL);
 	
 gtk_widget_show_all(window);
 }
@@ -685,16 +756,25 @@ gtk_widget_show_all(window);
 
 int main (int argc, char *argv[]){
 
-	gtk_init(&argc, &argv);
+	GtkApplication *app;
+	int status;
 	
-	make_window();
+	struct data *d = g_malloc (sizeof (struct info));
+	
+	app = gtk_application_new ("org.gtk.minimal", G_APPLICATION_FLAGS_NONE);
+	
+	g_signal_connect (app, "activate", G_CALLBACK (make_window), (gpointer) d);
+	
+	status = g_application_run (G_APPLICATION (app), argc, argv);
+	
+	g_object_unref (app);
+
+	g_free (d);
+	
+	return status;
 
 
 
-
-
-	gtk_main();
-	return 0; 
 }
 
 gboolean zero_to_nine_keys_callback ( GtkWidget *widget, GdkEventKey *event )
