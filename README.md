@@ -8,3 +8,4 @@ This calculator can also do operations such as *x^2, √ and %*.
 The calculator supports *BACKSPACE and a CLEAR* operation.
 
 The calculator shows a series of recent calculations as a *history*.
+
