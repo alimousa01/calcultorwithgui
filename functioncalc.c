@@ -584,7 +584,7 @@ void make_window(GtkApplication *app, gpointer data){
 	
 	gtk_window_set_default_size(GTK_WINDOW(window), 500, 500);
 	
-	gtk_window_set_title(GTK_WINDOW(window), "My Text APP");
+	gtk_window_set_title(GTK_WINDOW(window), "Calculator");
 	
 	GtkWidget *vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 4);
 	 
